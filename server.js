@@ -9,10 +9,9 @@ app.use(cors());
 app.use(express.json()); // ✅ Required to parse JSON request body
 
 app.post("/api/reports", (req, res) => {
-  console.log("📦 Incoming POST body:", req.body); // <== Add this line
+  console.log("📥 Incoming POST request");
 
   const report = req.body;
-
   if (!report || !report.generatedAt) {
     return res.status(400).json({ message: "Invalid report format" });
   }
@@ -35,3 +34,5 @@ app.get("/api/reports/latest", (req, res) => {
 app.listen(process.env.PORT || 10000, '0.0.0.0', () => {
   console.log(`✅ Listening on http://0.0.0.0:${port}`);
 });
+
+
