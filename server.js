@@ -1,43 +1,47 @@
-const db = require('./lib/db');
-const express = require("express");
-const cors = require("cors");
+const express = require('express');
+const cors = require('cors');
+const supabase = require('./lib/supabase');
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Enable CORS for the Vercel frontend only
 app.use(cors({ origin: 'https://snapshot-dashboard.vercel.app' }));
-app.use(express.json()); // Required to parse JSON request body
+app.use(express.json());
 
-// ... rest of your routes ...
-
-
-app.post("/api/reports", (req, res) => {
-  console.log("📥 Incoming POST request");
-
+// POST /api/reports
+app.post('/api/reports', async (req, res) => {
   const report = req.body;
+
   if (!report || !report.generatedAt) {
-    return res.status(400).json({ message: "Invalid report format" });
+    return res.status(400).json({ message: 'Invalid report format' });
   }
 
-  const stmt = db.prepare("INSERT INTO reports (data) VALUES (?)");
-  stmt.run(JSON.stringify(report));
+  const { error } = await supabase.from('reports').insert({ data: report });
 
-  res.status(200).json({ message: "Report stored" });
+  if (error) {
+    console.error('Insert failed:', error);
+    return res.status(500).json({ message: 'Insert failed' });
+  }
+
+  res.status(200).json({ message: 'Report stored' });
 });
 
-app.get("/api/reports/latest", (req, res) => {
-  console.log("✅ API test route hit");
-  res.json({
-    generatedAt: new Date().toISOString(),
-    failedBackups: [{ job: "Test", error: "Timeout" }],
-    snapshots: [{ name: "VM1", sizeGB: 40, ageHours: 27 }]
-  });
+// GET /api/reports/latest
+app.get('/api/reports/latest', async (req, res) => {
+  const { data, error } = await supabase
+    .from('reports')
+    .select('data')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error || !data) {
+    return res.status(404).json({ message: 'No report available' });
+  }
+
+  res.json(data.data); // Return only the stored JSON blob
 });
 
-
-app.listen(process.env.PORT, '0.0.0.0', () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`✅ Listening on http://0.0.0.0:${port}`);
 });
-
-
