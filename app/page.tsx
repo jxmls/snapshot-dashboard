@@ -27,8 +27,8 @@ export default function HomePage() {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const res = await axios.get('http://localhost:3001/api/reports/latest');
-        setReport(res.data);
+        const res = await axios.get('https://snapshot-api.onrender.com/api/reports/latest');
+         setReport(res.data);
       } catch (err) {
         console.error('Failed to fetch report:', err);
       }
