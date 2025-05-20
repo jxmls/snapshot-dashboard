@@ -35,7 +35,7 @@ app.get("/api/reports/latest", (req, res) => {
   res.json(JSON.parse(row.data));
 });
 
-app.listen(process.env.PORT || 10000, '0.0.0.0', () => {
+app.listen(process.env.PORT, '0.0.0.0', () => {
   console.log(`✅ Listening on http://0.0.0.0:${port}`);
 });
 
