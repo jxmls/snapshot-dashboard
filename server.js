@@ -5,8 +5,12 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors());
-app.use(express.json()); // ✅ Required to parse JSON request body
+// Enable CORS for the Vercel frontend only
+app.use(cors({ origin: 'https://snapshot-dashboard.vercel.app' }));
+app.use(express.json()); // Required to parse JSON request body
+
+// ... rest of your routes ...
+
 
 app.post("/api/reports", (req, res) => {
   console.log("📥 Incoming POST request");
