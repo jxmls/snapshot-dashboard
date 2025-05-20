@@ -27,13 +27,14 @@ app.post("/api/reports", (req, res) => {
 });
 
 app.get("/api/reports/latest", (req, res) => {
-  const row = db.prepare("SELECT data FROM reports ORDER BY created_at DESC LIMIT 1").get();
-  if (!row) {
-    return res.status(404).json({ message: "No report available" });
-  }
-
-  res.json(JSON.parse(row.data));
+  console.log("✅ API test route hit");
+  res.json({
+    generatedAt: new Date().toISOString(),
+    failedBackups: [{ job: "Test", error: "Timeout" }],
+    snapshots: [{ name: "VM1", sizeGB: 40, ageHours: 27 }]
+  });
 });
+
 
 app.listen(process.env.PORT, '0.0.0.0', () => {
   console.log(`✅ Listening on http://0.0.0.0:${port}`);
