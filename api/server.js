@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const supabase = require('./lib/supabase');
+const supabase = require('./supabase');
 
 const app = express();
 const port = process.env.PORT || 3001;
